@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App de Medición, Evaluación y Transferencia Formativa</title>
+
+  <style>
+    :root {
+      --azul: #00B2CC;
+      --azul-oscuro: #007A8C;
+      --amarillo: #FFFF00;
+      --fondo: #F6FAFB;
+      --blanco: #FFFFFF;
+      --texto: #1F2937;
+      --gris: #6B7280;
+      --gris-claro: #E5E7EB;
+      --sombra: 0 18px 45px rgba(0, 0, 0, 0.10);
+      --radio: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #EFFFFF 0%, #FFFFFF 48%, #FFFDEB 100%);
+      color: var(--texto);
+    }
+
+    .app {
+      width: 100%;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 310px 1fr;
+    }
+
+    .sidebar {
+      background: var(--blanco);
+      padding: 28px 22px;
+      border-right: 1px solid var(--gris-claro);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--azul), var(--amarillo));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 26px;
+      box-shadow: var(--sombra);
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--gris);
+    }
+
+    .search-box {
+      background: var(--fondo);
+      border-radius: 18px;
+      padding: 12px 14px;
+      margin-bottom: 22px;
+      border: 1px solid var(--gris-claro);
+    }
+
+    .search-box input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      color: var(--texto);
+    }
+
+    .nav-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--gris);
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav button {
+      border: none;
+      background: transparent;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border-radius: 16px;
+      cursor: pointer;
+      color: var(--texto);
+      transition: 0.25s ease;
+      font-size: 14px;
+    }
+
+    .nav button:hover {
+      background: #EFFFFF;
+      transform: translateX(3px);
+    }
+
+    .nav button.active {
+      background: var(--azul);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 12px 25px rgba(0, 178, 204, 0.25);
+    }
+
+    .nav .icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: rgba(0, 178, 204, 0.13);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .nav button.active .icon {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .main {
+      padding: 34px;
+      overflow: hidden;
+    }
+
+    .hero {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      padding: 32px;
+      box-shadow: var(--sombra);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 220px;
+      height: 220px;
+      background: var(--amarillo);
+      border-radius: 50%;
+      opacity: 0.65;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      right: 80px;
+      bottom: -70px;
+      width: 180px;
+      height: 180px;
+      background: var(--azul);
+      border-radius: 50%;
+      opacity: 0.16;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 950px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #EFFFFF;
+      color: var(--azul-oscuro);
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      margin: 16px 0 0;
+      color: var(--gris);
+      font-size: 17px;
+      line-height: 1.65;
+      max-width: 880px;
+    }
+
+    .logic-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .logic-card {
+      background: var(--blanco);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+      border: 1px solid #F0F2F4;
+    }
+
+    .logic-card span {
+      display: inline-flex;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      align-items: center;
+      justify-content: center;
+      background: #EFFFFF;
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .logic-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .logic-card p {
+      margin: 0;
+      color: var(--gris);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .content-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 24px 26px;
+      border-bottom: 1px solid var(--gris-claro);
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .panel-header h3 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .panel-header p {
+      margin: 8px 0 0;
+      color: var(--gris);
+      line-height: 1.55;
+    }
+
+    .badge {
+      background: var(--amarillo);
+      color: #333;
+      padding: 8px 13px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .detail {
+      padding: 26px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .info-box {
+      background: var(--fondo);
+      border: 1px solid #E6EEF0;
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .info-box .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      color: var(--gris);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .info-box p {
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .section {
+      margin-top: 24px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .section-title span {
+      background: #EFFFFF;
+      color: var(--azul-oscuro);
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      background: #FFFFFF;
+      border: 1px solid var(--gris-claro);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .list li {
+      background: var(--fondo);
+      border: 1px solid #E6EEF0;
+      padding: 13px 15px;
+      border-radius: 16px;
+      line-height: 1.5;
+      position: relative;
+      padding-left: 42px;
+    }
+
+    .list li::before {
+      content: "✓";
+      position: absolute;
+      left: 15px;
+      top: 13px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--azul);
+      color: white;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+    }
+
+    .question-list li::before {
+      content: "?";
+      background: var(--amarillo);
+      color: #111827;
+    }
+
+    .generator {
+      background: linear-gradient(135deg, #EFFFFF 0%, #FFFFFF 55%, #FFFDEB 100%);
+      border: 1px solid #D7F6FA;
+      border-radius: 24px;
+      padding: 22px;
+      margin-top: 12px;
+    }
+
+    .generator h4 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .generator p {
+      margin: 0 0 16px;
+      color: var(--gris);
+      line-height: 1.55;
+    }
+
+    .topic-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .topic-form input {
+      width: 100%;
+      border: 1px solid #CFE8EC;
+      border-radius: 16px;
+      padding: 14px 15px;
+      font-size: 15px;
+      outline: none;
+      background: white;
+      color: var(--texto);
+    }
+
+    .topic-form input:focus {
+      border-color: var(--azul);
+      box-shadow: 0 0 0 4px rgba(0,178,204,0.12);
+    }
+
+    .topic-form button,
+    .copy-button {
+      border: none;
+      border-radius: 16px;
+      padding: 13px 18px;
+      background: var(--azul);
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .topic-form button:hover,
+    .copy-button:hover {
+      background: var(--azul-oscuro);
+      transform: translateY(-1px);
+    }
+
+    .generator-output {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .output-box {
+      background: rgba(255,255,255,0.88);
+      border: 1px solid #E6EEF0;
+      border-radius: 18px;
+      padding: 17px;
+    }
+
+    .output-box strong {
+      display: block;
+      color: var(--azul-oscuro);
+      margin-bottom: 10px;
+    }
+
+    .output-box ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .output-box li {
+      margin-bottom: 8px;
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .copy-row {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .copy-button {
+      background: #111827;
+      font-size: 13px;
+      padding: 11px 14px;
+    }
+
+    .side-panel {
+      position: sticky;
+      top: 28px;
+    }
+
+    .method {
+      padding: 22px;
+    }
+
+    .method-block {
+      border-left: 4px solid var(--azul);
+      padding: 8px 0 8px 14px;
+      margin-bottom: 18px;
+    }
+
+    .method-block:nth-child(2) {
+      border-left-color: var(--amarillo);
+    }
+
+    .method-block:nth-child(3) {
+      border-left-color: #67D7C0;
+    }
+
+    .method-block h4 {
+      margin: 0 0 5px;
+      font-size: 15px;
+    }
+
+    .method-block p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--gris);
+      line-height: 1.45;
+    }
+
+    .empty-state {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      padding: 40px;
+      text-align: center;
+      color: var(--gris);
+      box-shadow: var(--sombra);
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--gris-claro);
+      }
+
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .content-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel {
+        position: relative;
+        top: auto;
+      }
+
+      .logic-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .generator-output {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .main {
+        padding: 20px;
+      }
+
+      .hero,
+      .panel,
+      .logic-card {
+        border-radius: 18px;
+      }
+
+      .nav {
+        grid-template-columns: 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-header {
+        flex-direction: column;
+      }
+
+      .topic-form {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">📊</div>
+        <div>
+          <h1>Evaluación Formativa</h1>
+          <p>Medición, transferencia e impacto</p>
+        </div>
+      </div>
+
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Buscar foco, indicador o evidencia..." />
+      </div>
+
+      <div class="nav-title">Focos del modelo</div>
+      <nav class="nav" id="nav"></nav>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <div class="hero-content">
+          <div class="eyebrow">Modelo práctico para evaluar formaciones</div>
+          <h2>Medir no es solo contar: es demostrar valor y transferencia</h2>
+          <p>
+            Este tablero permite organizar la evaluación de una experiencia formativa desde una mirada integral:
+            primero identifica si el diseño es coherente, luego observa cómo viven la ruta los participantes,
+            analiza si los recursos realmente apoyan el aprendizaje y finalmente verifica si el conocimiento
+            se transforma en resultados, aplicación real y buenas prácticas que puedan escalarse. De esta manera,
+            la medición deja de ser un reporte aislado y se convierte en evidencia útil para tomar decisiones,
+            mejorar la formación y demostrar transferencia de conocimiento en contextos reales.
+          </p>
+        </div>
+      </section>
+
+      <section class="logic-grid">
+        <article class="logic-card">
+          <span>📏</span>
+          <h3>Medición</h3>
+          <p>Convierte la experiencia en datos observables: tasas, porcentajes, avances, uso de recursos y logro de evidencias.</p>
+        </article>
+
+        <article class="logic-card">
+          <span>🔎</span>
+          <h3>Evaluación</h3>
+          <p>Interpreta esos datos para saber qué funcionó, qué debe ajustarse y qué decisiones se pueden tomar.</p>
+        </article>
+
+        <article class="logic-card">
+          <span>🚀</span>
+          <h3>Transferencia</h3>
+          <p>Verifica si el aprendizaje salió del curso y fue aplicado en tareas, procesos, proyectos o prácticas reales.</p>
+        </article>
+      </section>
+
+      <section class="content-layout">
+        <article class="panel" id="detailPanel"></article>
+
+        <aside class="panel side-panel">
+          <div class="panel-header">
+            <div>
+              <h3>Cómo usar el generador</h3>
+              <p>Escribe un tema concreto y conviértelo en indicadores y preguntas para entrevista.</p>
+            </div>
+          </div>
+
+          <div class="method">
+            <div class="method-block">
+              <h4>1. Elige el foco</h4>
+              <p>Selecciona si quieres medir coherencia, experiencia, medios, resultados, transferencia o escalamiento.</p>
+            </div>
+
+            <div class="method-block">
+              <h4>2. Escribe el tema</h4>
+              <p>Ejemplo: IA generativa en docentes, pensamiento crítico, liderazgo colaborativo o ciudadanía digital.</p>
+            </div>
+
+            <div class="method-block">
+              <h4>3. Usa la salida</h4>
+              <p>Los indicadores sirven para medir y las preguntas para entrevistas, grupos focales o seguimiento cualitativo.</p>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const data = [
+      {
+        icon: "🧭",
+        punto: "Coherencia pedagógica",
+        queMide: "Mide si la formación tiene una estructura clara y si existe alineación entre objetivos, contenidos, actividades, recursos y evaluación.",
+        indicadorPrincipal: "Índice de alineación pedagógica",
+        indicadores: [
+          "% de objetivos con actividades asociadas.",
+          "% de actividades conectadas con una evidencia de aprendizaje.",
+          "% de evaluaciones alineadas con los objetivos.",
+          "Nivel de claridad de los objetivos.",
+          "Nivel de pertinencia de contenidos según el rol del participante."
+        ],
+        evidencias: [
+          "Matriz de alineación pedagógica.",
+          "Mapa instruccional.",
+          "Rúbrica de revisión del diseño.",
+          "Revisión de expertos.",
+          "Comentarios de participantes sobre claridad y pertinencia."
+        ],
+        momento: "Antes de la implementación, durante la revisión del diseño y después de la primera cohorte.",
+        preguntas: [
+          "¿El propósito de la formación fue claro desde el inicio?",
+          "¿Las actividades ayudaron a alcanzar los objetivos?",
+          "¿Los contenidos respondieron a las necesidades de su rol?",
+          "¿La evaluación medía lo que realmente se trabajó?",
+          "¿Qué actividad sintió más conectada con su contexto real?"
+        ],
+        ejemploTema: "IA generativa en docentes",
+        generador: {
+          indicadores: [
+            "% de objetivos de aprendizaje de {tema} que cuentan con actividades asociadas.",
+            "% de contenidos de {tema} conectados con una evidencia de aprendizaje.",
+            "% de evaluaciones de {tema} alineadas con los objetivos declarados.",
+            "Nivel de claridad del propósito formativo de {tema}.",
+            "Nivel de pertinencia de {tema} según el rol del participante."
+          ],
+          preguntasEntrevista: [
+            "¿Qué debería ser capaz de hacer el participante al finalizar la formación sobre {tema}?",
+            "¿Los contenidos de {tema} responden a una necesidad real del rol o contexto del participante?",
+            "¿Qué actividad permite evidenciar mejor el aprendizaje de {tema}?",
+            "¿La evaluación realmente mide lo que se trabajó sobre {tema}?",
+            "¿Qué contenido, actividad o evaluación debería ajustarse para que la formación sobre {tema} sea más coherente?"
+          ]
+        }
+      },
+      {
+        icon: "✨",
+        punto: "Experiencia formativa",
+        queMide: "Mide si la ruta de aprendizaje fue clara, accesible, motivadora y viable para los participantes.",
+        indicadorPrincipal: "Índice de experiencia del participante",
+        indicadores: [
+          "Tasa de acceso.",
+          "Tasa de activación.",
+          "Tasa de participación efectiva.",
+          "Avance por módulo.",
+          "Tasa de finalización.",
+          "Tasa de abandono.",
+          "Nivel de satisfacción útil.",
+          "Carga percibida.",
+          "Tiempo real vs. tiempo estimado."
+        ],
+        evidencias: [
+          "Analítica de plataforma.",
+          "Registros de asistencia.",
+          "Encuestas de experiencia.",
+          "Comentarios abiertos.",
+          "Reportes de soporte.",
+          "Observaciones de tutores o facilitadores."
+        ],
+        momento: "Durante la implementación y al cierre de cada formación.",
+        preguntas: [
+          "¿La ruta fue fácil de seguir?",
+          "¿En qué momento se sintió más motivado o desmotivado?",
+          "¿La duración fue adecuada?",
+          "¿Qué barreras dificultaron su participación?",
+          "¿Recibió orientación suficiente para avanzar?"
+        ],
+        ejemploTema: "pensamiento crítico",
+        generador: {
+          indicadores: [
+            "Tasa de acceso a los contenidos o actividades de {tema}.",
+            "Tasa de activación en la primera actividad relacionada con {tema}.",
+            "Avance promedio de los participantes en la ruta de {tema}.",
+            "Tasa de finalización de las actividades de {tema}.",
+            "Nivel de satisfacción útil frente a la experiencia de aprendizaje de {tema}.",
+            "Carga percibida para completar las actividades de {tema}.",
+            "Tiempo real dedicado a {tema} vs. tiempo estimado."
+          ],
+          preguntasEntrevista: [
+            "¿La ruta para aprender sobre {tema} fue fácil de seguir?",
+            "¿En qué momento de la experiencia sobre {tema} se sintió más motivado o desmotivado?",
+            "¿La duración de las actividades de {tema} fue adecuada?",
+            "¿Qué barreras dificultaron su participación en las actividades de {tema}?",
+            "¿Qué orientación habría facilitado avanzar mejor en el aprendizaje de {tema}?"
+          ]
+        }
+      },
+      {
+        icon: "🧩",
+        punto: "Estrategias y medios",
+        queMide: "Mide si las metodologías, recursos y medios utilizados realmente apoyaron el aprendizaje y no fueron solo elementos complementarios o decorativos.",
+        indicadorPrincipal: "Índice de uso significativo de recursos",
+        indicadores: [
+          "Uso de videos, guías, foros, simuladores, lecturas o recursos interactivos.",
+          "Participación en actividades prácticas.",
+          "Descarga o reutilización de plantillas.",
+          "Calidad de ejercicios entregados.",
+          "Número de interacciones en espacios colaborativos.",
+          "Reportes de fallas técnicas."
+        ],
+        evidencias: [
+          "Analítica de uso de recursos.",
+          "Participación en foros.",
+          "Productos desarrollados.",
+          "Rúbricas de actividades.",
+          "Encuestas sobre utilidad de recursos.",
+          "Pruebas de usabilidad."
+        ],
+        momento: "Durante la implementación y al cierre de cada módulo o actividad clave.",
+        preguntas: [
+          "¿Qué recurso le ayudó más a aprender y por qué?",
+          "¿Qué recurso no le aportó valor?",
+          "¿Los videos, guías o actividades facilitaron la comprensión?",
+          "¿La tecnología apoyó el aprendizaje o generó barreras?",
+          "¿Qué medio debería mantenerse, ajustarse o eliminarse?"
+        ],
+        ejemploTema: "ciudadanía digital",
+        generador: {
+          indicadores: [
+            "Nivel de uso de videos, guías, foros, simuladores o recursos interactivos sobre {tema}.",
+            "% de participantes que completan actividades prácticas relacionadas con {tema}.",
+            "Número de descargas o reutilizaciones de plantillas asociadas a {tema}.",
+            "Calidad de los ejercicios entregados sobre {tema} según rúbrica.",
+            "Número de interacciones en espacios colaborativos sobre {tema}.",
+            "Número de reportes de fallas técnicas o barreras de uso en recursos de {tema}."
+          ],
+          preguntasEntrevista: [
+            "¿Qué recurso le ayudó más a comprender {tema} y por qué?",
+            "¿Qué recurso sobre {tema} no le aportó valor?",
+            "¿Las actividades prácticas facilitaron la aplicación de {tema}?",
+            "¿La tecnología usada para trabajar {tema} apoyó el aprendizaje o generó barreras?",
+            "¿Qué medio o recurso debería mantenerse, ajustarse o eliminarse para enseñar mejor {tema}?"
+          ]
+        }
+      },
+      {
+        icon: "🎯",
+        punto: "Resultados e impacto",
+        queMide: "Mide si la formación generó aprendizaje, cumplimiento de objetivos y mejoras observables en el desempeño académico, laboral o institucional.",
+        indicadorPrincipal: "Índice de logro e impacto formativo",
+        indicadores: [
+          "Resultado pretest/postest.",
+          "Tasa de aprobación.",
+          "Logro de competencias.",
+          "Calidad de evidencias con rúbrica.",
+          "Nivel de mejora percibida.",
+          "Cambios observables en el desempeño.",
+          "Cumplimiento de productos o retos aplicados."
+        ],
+        evidencias: [
+          "Evaluaciones diagnósticas y finales.",
+          "Rúbricas de desempeño.",
+          "Productos o evidencias entregadas.",
+          "Reportes de aplicación.",
+          "Autoevaluaciones.",
+          "Retroalimentación de líderes, docentes o pares."
+        ],
+        momento: "Al inicio, al cierre y en seguimiento posterior a 30 o 60 días.",
+        preguntas: [
+          "¿Qué puede hacer ahora que antes no podía hacer?",
+          "¿Qué aprendizaje considera más útil?",
+          "¿Qué cambió en su forma de trabajar, enseñar, aprender o tomar decisiones?",
+          "¿Qué evidencia demuestra que hubo aprendizaje?",
+          "¿Qué resultado concreto obtuvo después de la formación?"
+        ],
+        ejemploTema: "liderazgo colaborativo",
+        generador: {
+          indicadores: [
+            "Diferencia entre resultado diagnóstico y resultado final en {tema}.",
+            "Tasa de aprobación de actividades o evaluación final sobre {tema}.",
+            "Nivel de logro de competencias asociadas a {tema}.",
+            "Calidad de evidencias o productos sobre {tema} según rúbrica.",
+            "Nivel de mejora percibida en el manejo de {tema}.",
+            "Cambios observables en el desempeño relacionados con {tema}.",
+            "Cumplimiento de productos o retos aplicados sobre {tema}."
+          ],
+          preguntasEntrevista: [
+            "¿Qué puede hacer ahora sobre {tema} que antes no podía hacer?",
+            "¿Qué aprendizaje sobre {tema} considera más útil?",
+            "¿Qué cambió en su forma de trabajar, enseñar, aprender o tomar decisiones a partir de {tema}?",
+            "¿Qué evidencia demuestra que hubo aprendizaje sobre {tema}?",
+            "¿Qué resultado concreto obtuvo después de aplicar lo aprendido sobre {tema}?"
+          ]
+        }
+      },
+      {
+        icon: "🚀",
+        punto: "Transferencia",
+        queMide: "Mide si el aprendizaje salió del curso y fue aplicado en una tarea, proceso, clase, proyecto o situación real.",
+        indicadorPrincipal: "Índice de transferencia del aprendizaje",
+        indicadores: [
+          "% de participantes que aplican lo aprendido en una tarea real.",
+          "Número de casos de uso desarrollados.",
+          "Frecuencia de uso posterior.",
+          "Calidad de la aplicación según rúbrica.",
+          "Nivel de autonomía para aplicar lo aprendido.",
+          "Validación del uso por parte de un líder, docente, tutor o par."
+        ],
+        evidencias: [
+          "Caso aplicado.",
+          "Producto mejorado.",
+          "Actividad rediseñada.",
+          "Flujo de trabajo optimizado.",
+          "Prompt documentado.",
+          "Reflexión aplicada.",
+          "Evidencia de uso en contexto.",
+          "Entrevista o encuesta de seguimiento."
+        ],
+        momento: "Principalmente 30 o 60 días después de finalizar la formación. También puede medirse al cierre si hay un reto aplicado.",
+        preguntas: [
+          "¿En qué tarea concreta aplicó lo aprendido?",
+          "¿Qué problema o necesidad resolvió?",
+          "¿Qué resultado obtuvo?",
+          "¿Qué dificultades encontró al aplicar lo aprendido?",
+          "¿Qué necesitaría para seguir aplicándolo?",
+          "¿Puede compartir una evidencia del uso que hizo?"
+        ],
+        ejemploTema: "IA generativa en procesos administrativos",
+        generador: {
+          indicadores: [
+            "% de participantes que aplican {tema} en una tarea, proceso, clase o proyecto real.",
+            "Número de casos de uso desarrollados alrededor de {tema}.",
+            "Frecuencia de uso posterior de {tema} después de finalizar la formación.",
+            "Calidad de la aplicación de {tema} según rúbrica o criterio definido.",
+            "Nivel de autonomía para aplicar {tema} sin acompañamiento.",
+            "Validación del uso de {tema} por parte de un líder, docente, tutor o par."
+          ],
+          preguntasEntrevista: [
+            "¿En qué tarea concreta aplicó {tema}?",
+            "¿Qué problema o necesidad resolvió usando {tema}?",
+            "¿Qué resultado obtuvo después de aplicar {tema}?",
+            "¿Qué dificultades encontró al llevar {tema} a su contexto real?",
+            "¿Qué necesitaría para seguir aplicando {tema} de manera autónoma?",
+            "¿Puede compartir una evidencia del uso que hizo de {tema}?"
+          ]
+        }
+      },
+      {
+        icon: "🌱",
+        punto: "Escalamiento",
+        queMide: "Mide si los aprendizajes, recursos o buenas prácticas generadas pueden compartirse, replicarse o institucionalizarse en otras áreas, equipos o poblaciones.",
+        indicadorPrincipal: "Índice de escalamiento de buenas prácticas",
+        indicadores: [
+          "Número de casos de uso documentados.",
+          "% de casos replicables.",
+          "Número de recursos reutilizables creados.",
+          "Número de áreas que adoptan una práctica.",
+          "Participación en comunidades de práctica.",
+          "Número de socializaciones realizadas.",
+          "Número de guías, plantillas o recomendaciones derivadas."
+        ],
+        evidencias: [
+          "Banco de casos.",
+          "Comunidad de práctica.",
+          "Guías institucionales.",
+          "Plantillas reutilizables.",
+          "Sesiones de socialización.",
+          "Testimonios.",
+          "Recursos compartidos.",
+          "Adaptaciones realizadas por otras áreas."
+        ],
+        momento: "Trimestral o semestral, después de contar con varias cohortes o casos aplicados.",
+        preguntas: [
+          "¿El caso desarrollado podría servirle a otra persona o área?",
+          "¿Qué ajustes necesitaría para replicarse?",
+          "¿Compartió su experiencia con otros?",
+          "¿Qué recursos deberían crearse para facilitar la réplica?",
+          "¿Qué barreras institucionales limitarían el escalamiento?",
+          "¿Qué práctica debería convertirse en recomendación institucional?"
+        ],
+        ejemploTema: "buenas prácticas de IA generativa",
+        generador: {
+          indicadores: [
+            "Número de casos de uso documentados sobre {tema}.",
+            "% de casos de {tema} que pueden replicarse en otras áreas o equipos.",
+            "Número de recursos reutilizables creados para facilitar la adopción de {tema}.",
+            "Número de áreas, equipos o poblaciones que adoptan prácticas relacionadas con {tema}.",
+            "Participación en comunidades de práctica asociadas a {tema}.",
+            "Número de socializaciones realizadas sobre experiencias o aprendizajes de {tema}.",
+            "Número de guías, plantillas o recomendaciones derivadas de {tema}."
+          ],
+          preguntasEntrevista: [
+            "¿El caso desarrollado sobre {tema} podría servirle a otra persona, equipo o área?",
+            "¿Qué ajustes necesitaría {tema} para replicarse en otro contexto?",
+            "¿Compartió su experiencia sobre {tema} con otros?",
+            "¿Qué recursos deberían crearse para facilitar la réplica de {tema}?",
+            "¿Qué barreras institucionales podrían limitar el escalamiento de {tema}?",
+            "¿Qué práctica relacionada con {tema} debería convertirse en recomendación institucional?"
+          ]
+        }
+      }
+    ];
+
+    let activeIndex = 0;
+
+    const nav = document.getElementById("nav");
+    const detailPanel = document.getElementById("detailPanel");
+    const searchInput = document.getElementById("searchInput");
+
+    function createList(items, className = "") {
+      return `
+        <ul class="list ${className}">
+          ${items.map(item => `<li>${item}</li>`).join("")}
+        </ul>
+      `;
+    }
+
+    function createChips(items) {
+      return `
+        <div class="chips">
+          ${items.map(item => `<span class="chip">${item}</span>`).join("")}
+        </div>
+      `;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function applyTopic(template, topic) {
+      return template.replaceAll("{tema}", topic);
+    }
+
+    function renderGeneratedContent(topic) {
+      const item = data[activeIndex];
+      const safeTopic = escapeHtml(topic || item.ejemploTema);
+      const indicadores = item.generador.indicadores.map(ind => applyTopic(ind, safeTopic));
+      const preguntas = item.generador.preguntasEntrevista.map(p => applyTopic(p, safeTopic));
+
+      const output = document.getElementById("generatorOutput");
+      output.innerHTML = `
+        <div class="output-box">
+          <strong>Indicadores específicos sugeridos para: ${safeTopic}</strong>
+          <ul>
+            ${indicadores.map(ind => `<li>${ind}</li>`).join("")}
+          </ul>
+        </div>
+
+        <div class="output-box">
+          <strong>Preguntas para entrevista sobre: ${safeTopic}</strong>
+          <ul>
+            ${preguntas.map(p => `<li>${p}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+    }
+
+    function generateFromTopic() {
+      const input = document.getElementById("topicInput");
+      const topic = input.value.trim() || data[activeIndex].ejemploTema;
+      renderGeneratedContent(topic);
+    }
+
+    function copyGenerated() {
+      const output = document.getElementById("generatorOutput");
+      const text = output.innerText.trim();
+
+      navigator.clipboard.writeText(text).then(() => {
+        const button = document.getElementById("copyButton");
+        const original = button.innerText;
+        button.innerText = "Copiado";
+        setTimeout(() => {
+          button.innerText = original;
+        }, 1300);
+      });
+    }
+
+    function renderNav(filteredData = data) {
+      nav.innerHTML = filteredData.map(item => {
+        const originalIndex = data.indexOf(item);
+        return `
+          <button class="${originalIndex === activeIndex ? "active" : ""}" onclick="setActive(${originalIndex})">
+            <span class="icon">${item.icon}</span>
+            <span>${item.punto}</span>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function renderDetail() {
+      const item = data[activeIndex];
+
+      detailPanel.innerHTML = `
+        <div class="panel-header">
+          <div>
+            <h3>${item.icon} ${item.punto}</h3>
+            <p>${item.queMide}</p>
+          </div>
+          <span class="badge">Foco ${activeIndex + 1} de ${data.length}</span>
+        </div>
+
+        <div class="detail">
+          <div class="info-grid">
+            <div class="info-box">
+              <div class="label">Indicador principal</div>
+              <p><strong>${item.indicadorPrincipal}</strong></p>
+            </div>
+
+            <div class="info-box">
+              <div class="label">Momento de medición</div>
+              <p>${item.momento}</p>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <span>1</span>
+              Indicadores base del foco
+            </div>
+            ${createChips(item.indicadores)}
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <span>2</span>
+              Evidencias posibles
+            </div>
+            ${createList(item.evidencias)}
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <span>3</span>
+              Generador por tema
+            </div>
+
+            <div class="generator">
+              <h4>Escribe el tema que quieres evaluar</h4>
+              <p>
+                La app generará indicadores específicos y preguntas para una entrevista cualitativa,
+                ajustadas al foco seleccionado.
+              </p>
+
+              <div class="topic-form">
+                <input
+                  id="topicInput"
+                  type="text"
+                  placeholder="Ejemplo: ${item.ejemploTema}"
+                  onkeydown="if(event.key === 'Enter'){ generateFromTopic(); }"
+                />
+                <button onclick="generateFromTopic()">Generar</button>
+              </div>
+
+              <div id="generatorOutput" class="generator-output"></div>
+
+              <div class="copy-row">
+                <button id="copyButton" class="copy-button" onclick="copyGenerated()">Copiar resultado</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <span>4</span>
+              Preguntas cualitativas generales del foco
+            </div>
+            ${createList(item.preguntas, "question-list")}
+          </div>
+        </div>
+      `;
+
+      renderNav(getFilteredData());
+      renderGeneratedContent(item.ejemploTema);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function setActive(index) {
+      activeIndex = index;
+      renderDetail();
+    }
+
+    function getFilteredData() {
+      const term = searchInput.value.toLowerCase().trim();
+
+      if (!term) return data;
+
+      return data.filter(item => {
+        const searchableText = `
+          ${item.punto}
+          ${item.queMide}
+          ${item.indicadorPrincipal}
+          ${item.indicadores.join(" ")}
+          ${item.evidencias.join(" ")}
+          ${item.momento}
+          ${item.preguntas.join(" ")}
+          ${item.ejemploTema}
+          ${item.generador.indicadores.join(" ")}
+          ${item.generador.preguntasEntrevista.join(" ")}
+        `.toLowerCase();
+
+        return searchableText.includes(term);
+      });
+    }
+
+    function handleSearch() {
+      const filtered = getFilteredData();
+
+      renderNav(filtered);
+
+      if (filtered.length > 0 && !filtered.includes(data[activeIndex])) {
+        activeIndex = data.indexOf(filtered[0]);
+        renderDetail();
+      }
+
+      if (filtered.length === 0) {
+        detailPanel.innerHTML = `
+          <div class="empty-state">
+            <h3>No hay coincidencias</h3>
+            <p>Prueba buscando por palabras como impacto, transferencia, evidencias, rúbrica, participación, entrevista o escalamiento.</p>
+          </div>
+        `;
+      }
+    }
+
+    searchInput.addEventListener("input", handleSearch);
+
+    renderNav();
+    renderDetail();
+  </script>
+</body>
+</html>
